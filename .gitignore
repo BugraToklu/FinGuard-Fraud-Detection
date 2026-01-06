@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.log
+.idea/
+.vscode/
+.DS_Store
+*.checkpoint/
+postgres_data/
+kafka_data/
+minio_data/
+redis_data/
+EOT
