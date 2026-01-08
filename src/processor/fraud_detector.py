@@ -32,9 +32,6 @@ def write_to_redis(batch_df, batch_id):
 def main():
     print("[INFO] Starting FinGuard Spark Processor with Redis Integration...")
 
-    # --- KRİTİK DÜZELTME BURADA ---
-    # .config("spark.jars.packages", ...) satırı eklendi.
-    # Spark 3.5.0 kullandığın için uygun paket sürümü girildi.
     spark = SparkSession.builder \
         .appName("FinGuardFraudDetector") \
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0") \
@@ -64,7 +61,6 @@ def main():
         .select(from_json(col("value"), schema).alias("data")) \
         .select("data.*")
 
-    # Fraud veya 10.000 TL üzeri işlemler
     df_fraud = df_parsed.filter(
         (col("is_fraud_simulation") == True) |
         (col("amount") > 10000)
