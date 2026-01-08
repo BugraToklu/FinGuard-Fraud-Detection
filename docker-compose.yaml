@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # --- 1. KAFKA ALTYAPISI (Confluent - Endüstri Standardı) ---
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: finguard-zookeeper
@@ -39,7 +38,6 @@ services:
       retries: 5
       start_period: 15s
 
-  # --- 2. HIZ KATMANI (REDIS) ---
   redis:
     image: redis:7.2-alpine
     container_name: finguard-redis
@@ -47,24 +45,22 @@ services:
       - "6379:6379"
     restart: always
 
-  # --- 3. SPARK ALTYAPISI (Official Apache Images - Bitnami YOK!) ---
   spark-master:
     image: apache/spark:3.5.0
     container_name: finguard-spark-master
-    user: root # Izin hatalarini engellemek icin
+    user: root 
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_SECRET=undefined
     ports:
       - "8080:8080"
       - "7077:7077"
-    # Bitnami scripti yerine dogrudan Master'i baslatan komut:
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
 
   spark-worker:
     image: apache/spark:3.5.0
     container_name: finguard-spark-worker
-    user: root # Izin hatalarini engellemek icin
+    user: root 
     depends_on:
       - spark-master
     environment:
@@ -72,10 +68,8 @@ services:
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_MEMORY=2G
       - SPARK_RPC_AUTHENTICATION_SECRET=undefined
-    # Dogrudan Worker'i baslatan ve Master'a baglayan komut:
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
 
-  # --- 4. ANALIZ ORTAMI (JUPYTER) ---
   jupyter:
     image: jupyter/pyspark-notebook:latest
     container_name: finguard-jupyter
