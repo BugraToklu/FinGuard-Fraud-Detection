@@ -86,7 +86,7 @@ class BankingSimulator:
             "city": city,
             "merchant": merchant,
             "category": category,
-            
+
             "is_fraud_simulation": is_fraud
         }
 
